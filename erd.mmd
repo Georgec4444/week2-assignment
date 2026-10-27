@@ -1,0 +1,44 @@
+---
+title: Library Database ERD
+---
+erDiagram
+    books {
+        INTEGER book_id PK
+        TEXT title "NOT NULL"
+        TEXT isbn UK "nullable"
+        INTEGER publication_year "nullable"
+    }
+    authors {
+        INTEGER author_id PK
+        TEXT name UK "NOT NULL"
+    }
+    book_authors {
+        INTEGER book_id PK, FK
+        INTEGER author_id PK, FK
+    }
+    copies {
+        INTEGER copy_id PK
+        INTEGER book_id FK "NOT NULL"
+        TEXT condition "NOT NULL"
+        TEXT status "available | checked_out | lost"
+    }
+    members {
+        INTEGER member_id PK
+        TEXT name "NOT NULL"
+        TEXT email UK "NOT NULL"
+        TEXT status "active | suspended"
+    }
+    checkouts {
+        INTEGER checkout_id PK
+        INTEGER copy_id FK "NOT NULL"
+        INTEGER member_id FK "NOT NULL"
+        TEXT checkout_date "NOT NULL"
+        TEXT due_date "checkout_date + 14 days"
+        TEXT return_date "NULL while on loan"
+    }
+
+    books ||--o{ book_authors : "written by"
+    authors ||--o{ book_authors : "writes"
+    books ||--o{ copies : "has physical"
+    copies ||--o{ checkouts : "loaned in"
+    members ||--o{ checkouts : "borrows in"
